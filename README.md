@@ -1,16 +1,76 @@
-# React + Vite
+# 🎬 IMovies – Online Movie Ticket Booking System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Introduction
 
-Currently, two official plugins are available:
+IMovies is a full-stack web application developed to make movie ticket booking simple, convenient, and user-friendly. It allows users to browse available movies, select show timings, choose their preferred seats, enter customer details, and confirm their bookings online.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The application is built using React.js for the frontend, Node.js and Express.js for the backend, and MongoDB Atlas for storing booking information.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Browse available movies.
+- Select preferred movie show timings.
+- Choose seats from the available seating layout.
+- Automatically calculate ticket prices.
+- Enter customer name and email.
+- Confirm movie ticket bookings.
+- Store booking details in MongoDB Atlas.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Frontend**
+- React.js
+- JavaScript
+- HTML
+- CSS
+- Vite
+
+**Backend**
+- Node.js
+- Express.js
+
+**Database**
+- MongoDB Atlas
+- Mongoose
+
+**Deployment**
+- Vercel (Frontend)
+- Render (Backend)
+
+## Live Demo
+
+[Visit IMovies](https://imovies-theta-indol.vercel.app)
+
+## GitHub Repository
+
+[IMovies – GitHub](https://github.com/anushkaarya28/imovies)
+
+## ⚙️ Project Working
+
+1. Users open the IMovies website.
+2. They browse the available movies.
+3. They select a movie and show time.
+4. They choose their preferred seats.
+5. They enter their name and email address.
+6. The system calculates the total ticket amount.
+7. The booking details are sent to the backend and stored in MongoDB Atlas.
+
+## Future Enhancements
+
+- User registration and login.
+- Online payment integration.
+- Booking history.
+- Admin dashboard.
+- Real-time seat availability management.
+
+## Project Information
+
+**Project Name:** IMovies – Online Movie Ticket Booking System  
+**Developed By:** Anushka  
+**Course:** B.Tech  
+**Semester:** 5th Semester  
+**College:** Lakshmi Narain College of Technology and Science
+
+## Note
+
+This project is developed for academic and learning purposes. It demonstrates frontend development, backend API integration, database management, and cloud deployment.
