@@ -45,7 +45,7 @@ The application is built using React.js for the frontend, Node.js and Express.js
 
 [IMovies – GitHub](https://github.com/anushkaarya28/imovies)
 
-## ⚙️ Project Working
+## Project Working
 
 1. Users open the IMovies website.
 2. They browse the available movies.
