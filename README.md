@@ -74,3 +74,9 @@ The application is built using React.js for the frontend, Node.js and Express.js
 ## Note
 
 This project is developed for academic and learning purposes. It demonstrates frontend development, backend API integration, database management, and cloud deployment.
+
+## Website Screenshots
+
+### Home Page
+
+![IMovies Home Page](imovies-home.png)
