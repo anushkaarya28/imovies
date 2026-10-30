@@ -108,7 +108,7 @@ async function startServer() {
     });
 
   } catch (error) {
-    console.error("Server startup failed:", error.message);
+    console.error("Server startup failed:", error);
     process.exit(1);
   }
 }
