@@ -1,82 +1,242 @@
 # 🎬 IMovies – Online Movie Ticket Booking System
 
-## Introduction
+IMovies is a full-stack web application developed to make online movie ticket booking simple, convenient, and user-friendly. Users can browse movies, select show timings, choose seats, register or log in securely, book tickets, and view their booking history.
 
-IMovies is a full-stack web application developed to make movie ticket booking simple, convenient, and user-friendly. It allows users to browse available movies, select show timings, choose their preferred seats, enter customer details, and confirm their bookings online.
+The project is built using React.js, Node.js, Express.js, MongoDB Atlas, and JWT Authentication. It also uses Bootstrap for responsive user interface design.
 
-The application is built using React.js for the frontend, Node.js and Express.js for the backend, and MongoDB Atlas for storing booking information.
+## 🌐 Live Demo
 
-## Features
+**Website:** [Visit IMovies](https://imovies-theta-indol.vercel.app)
+
+**GitHub Repository:** [View IMovies on GitHub](https://github.com/anushkaarya28/imovies)
+
+**Backend API:** https://imovies-backend-lu6f.onrender.com
+
+## ✨ Features
 
 - Browse available movies.
 - Select preferred movie show timings.
-- Choose seats from the available seating layout.
-- Automatically calculate ticket prices.
-- Enter customer name and email.
-- Confirm movie ticket bookings.
+- Choose seats from the seating layout.
+- Automatically calculate the total ticket price.
+- Enter customer details for booking.
+- User registration and login.
+- Secure password hashing.
+- JWT-based user authentication.
+- Protected booking APIs.
+- Book movie tickets online.
+- View personal booking history in the My Bookings section.
 - Store booking details in MongoDB Atlas.
+- Responsive user interface using Bootstrap.
 
-## Technologies Used
+## 🛠️ Technologies Used
 
-**Frontend**
-- React.js
-- JavaScript
+### Frontend
 - HTML
 - CSS
+- JavaScript
+- React.js
 - Vite
+- Bootstrap
 
-**Backend**
+### Backend
 - Node.js
 - Express.js
+- REST API
+- Asynchronous JavaScript
 
-**Database**
+### Database
 - MongoDB Atlas
 - Mongoose
 
-**Deployment**
-- Vercel (Frontend)
-- Render (Backend)
+### Authentication & Security
+- JSON Web Token (JWT)
+- bcryptjs
+- Protected API routes
 
-## Live Demo
+### Deployment & Tools
+- Git
+- GitHub
+- Vercel
+- Render
+- Visual Studio Code
 
-[Visit IMovies](https://imovies-theta-indol.vercel.app)
+## 📸 Website Screenshots
 
-## GitHub Repository
+### 1. Home Page
 
-[IMovies – GitHub](https://github.com/anushkaarya28/imovies)
+<!-- Add more screenshots here after uploading them to the GitHub repository. -->
 
-## Project Working
+### 2. Login and Registration Page
+
+<!-- Add your login/register screenshot here. -->
+
+### 3. Movie and Seat Selection
+
+<!-- Add your movie/seat selection screenshot here. -->
+
+### 4. My Bookings Page
+
+<!-- Add your My Bookings screenshot here. -->
+
+## ⚙️ Project Working
 
 1. Users open the IMovies website.
-2. They browse the available movies.
-3. They select a movie and show time.
-4. They choose their preferred seats.
-5. They enter their name and email address.
+2. Users can register or log in to their account.
+3. They browse the available movies.
+4. They select a movie and preferred show time.
+5. They choose their preferred seats.
 6. The system calculates the total ticket amount.
-7. The booking details are sent to the backend and stored in MongoDB Atlas.
+7. Users confirm their booking.
+8. Booking details are sent to the backend through REST APIs.
+9. The backend verifies the user's JWT authentication token.
+10. Booking information is stored in MongoDB Atlas.
+11. Users can view their booking history in the My Bookings section.
 
-## Future Enhancements
+## 🔐 Authentication System
 
-- User registration and login.
-- Online payment integration.
-- Booking history.
-- Admin dashboard.
-- Real-time seat availability management.
+IMovies uses JSON Web Token (JWT) for user authentication.
 
-## Project Information
+- Users can register and log in.
+- Passwords are hashed using bcryptjs before being stored.
+- JWT tokens are generated after successful registration or login.
+- Protected API routes verify the authentication token.
+- Users can access their own booking history after logging in.
 
-**Project Name:** IMovies – Online Movie Ticket Booking System  
-**Developed By:** Anushka  
-**Course:** B.Tech  
-**Semester:** 5th Semester  
-**College:** Lakshmi Narain College of Technology and Science
+## 📂 Project Structure
 
-## Note
+```text
+IMovies/
+│
+├── server/
+│   ├── models/
+│   │   ├── Booking.js
+│   │   └── user.js
+│   │
+│   ├── routes/
+│   │   └── authRoutes.js
+│   │
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   │
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+│
+├── src/
+│   ├── components/
+│   │   └── auth.jsx
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── ...
+│
+├── public/
+├── index.html
+├── package.json
+└── README.md
+```
 
-This project is developed for academic and learning purposes. It demonstrates frontend development, backend API integration, database management, and cloud deployment.
+## 🚀 Run the Project Locally
 
-## Website Screenshots
+### Prerequisites
 
-### Home Page
+Make sure the following are installed:
 
-![IMovies Home Page](imovies-home.png)
+- Node.js
+- npm
+- MongoDB Atlas account
+- Git
+
+### 1. Clone the Repository
+
+git clone https://github.com/anushkaarya28/imovies.git
+
+### 2. Open the Project Folder
+
+cd imovies
+
+### 3. Install Frontend Dependencies
+
+npm install
+
+### 4. Install Backend Dependencies
+
+cd server
+npm install
+
+### 5. Configure Environment Variables
+
+Create a `.env` file inside the `server` folder and add:
+env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+
+Replace the placeholder values with your own MongoDB connection string and a strong secret key. Never upload your actual `.env` file or secret values to GitHub.
+
+### 6. Start the Backend
+
+From the `server` folder, run:
+
+node server.js
+
+The backend will run at:
+http://localhost:5000
+
+### 7. Start the Frontend
+
+Open another terminal in the project root folder and run:
+
+npm run dev
+
+Open the local URL displayed in the terminal, usually:
+http://localhost:5173
+
+## 🔗 Backend API Endpoints
+
+| Method |  Endpoint          |           Description                     |
+|--------|--------------------|-------------------------------------------|
+| GET    |     `/`            | Backend welcome route                     |
+| GET    | `/api/health`      | Check backend health                      |
+| POST   |`/api/auth/register'| Register a new user                       |
+| POST   | `/api/auth/login`  | Login user                                |
+| POST   | `/api/bookings`    | Create a booking (protected)              |
+| GET    | `/api/bookings`    | Get logged-in user's bookings (protected) |
+  
+Protected endpoints require a valid JWT token in the Authorization header.
+
+Authorization: Bearer YOUR_JWT_TOKEN
+
+## 🎯 Skills Required & Technologies Covered
+
+1. HTML
+2. CSS
+3. JavaScript
+4. React.js
+5. Node.js
+6. Express.js
+7. MongoDB
+8. Asynchronous JavaScript
+9. JSON Web Token (JWT)
+10. Bootstrap
+
+## 🔮 Future Enhancements
+
+- Online payment gateway integration.
+- Real-time seat availability and seat locking.
+- Admin dashboard for movie and show management.
+- Movie reviews and ratings.
+- Email booking confirmation.
+- Downloadable e-tickets.
+- Advanced movie search and filtering.
+
+## 👩‍💻 Project Information
+
+- **Project Name:** IMovies – Online Movie Ticket Booking System
+- **Developed By:** Anushka
+- **Course:** B.Tech
+- **Semester:** 5th Semester
+- **College:** Lakshmi Narain College of Technology and Science
+
+## 📝 Note
+
+This project is developed for academic and learning purposes. It demonstrates full-stack web development, frontend and backend integration, REST API development, database management, JWT-based authentication, and cloud deployment.
