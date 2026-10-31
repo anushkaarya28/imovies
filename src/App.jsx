@@ -2,17 +2,41 @@
 import { useState } from "react";
 import "./App.css";
 
-// Apne Render backend ka actual URL yahan paste karna
 const API_URL = "https://imovies-backend-lu6f.onrender.com";
 
 const movies = [
-  { id: 1, name: "Interstellar", genre: "Sci-Fi", image: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg" },
-  { id: 2, name: "Inception", genre: "Thriller", image: "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg" },
-  { id: 3, name: "The Dark Knight", genre: "Action", image: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" },
-  { id: 4, name: "Avatar", genre: "Adventure", image: "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg" },
+  {
+    id: 1,
+    name: "Interstellar",
+    genre: "Sci-Fi",
+    image:
+      "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+  },
+  {
+    id: 2,
+    name: "Inception",
+    genre: "Thriller",
+    image:
+      "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
+  },
+  {
+    id: 3,
+    name: "The Dark Knight",
+    genre: "Action",
+    image:
+      "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+  },
+  {
+    id: 4,
+    name: "Avatar",
+    genre: "Adventure",
+    image:
+      "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg",
+  },
 ];
 
 const showTimes = ["10:00 AM", "1:00 PM", "4:00 PM", "7:00 PM"];
+
 const allSeats = Array.from({ length: 24 }, (_, i) => {
   const row = String.fromCharCode(65 + Math.floor(i / 8));
   return `${row}${(i % 8) + 1}`;
@@ -25,6 +49,7 @@ function App() {
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
   const [loading, setLoading] = useState(false);
 
   const price = 200;
@@ -43,11 +68,13 @@ function App() {
     setMessage("");
 
     if (!customerName.trim() || !email.trim()) {
+      setMessageType("danger");
       setMessage("Please enter your name and email.");
       return;
     }
 
     if (seats.length === 0) {
+      setMessageType("danger");
       setMessage("Please select at least one seat.");
       return;
     }
@@ -77,6 +104,7 @@ function App() {
       }
 
       setMessage("Booking successful! Your tickets are booked.");
+      setMessageType("success");
       setSeats([]);
       setCustomerName("");
       setEmail("");
@@ -84,6 +112,7 @@ function App() {
       setMessage(
         "Booking failed. Please check your internet connection and try again."
       );
+      setMessageType("danger");
       console.error(error);
     } finally {
       setLoading(false);
@@ -91,230 +120,203 @@ function App() {
   }
 
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
-        <h1 style={styles.logo}>🎬 IMovies</h1>
-        <span style={styles.tagline}>Your Movie, Your Experience</span>
+    <div className="bg-black text-white min-vh-100">
+      {/* Header */}
+      <header className="bg-dark py-3 shadow">
+        <div className="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <h1 className="text-danger fw-bold mb-0">🎬 IMovies</h1>
+          <span className="text-light">Your Movie, Your Experience</span>
+        </div>
       </header>
 
-      <main style={styles.container}>
-        <h2 style={styles.heading}>Now Showing</h2>
+      <main className="container py-5">
+        {/* Movies */}
+        <h2 className="text-danger fw-bold mb-4">Now Showing</h2>
 
-        <div style={styles.movieGrid}>
+        <div className="row g-4">
           {movies.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => {
-                setMovie(item);
-                setSeats([]);
-                setMessage("");
-              }}
-              style={{
-                ...styles.movieCard,
-                border:
+            <div className="col-6 col-md-4 col-lg-3" key={item.id}>
+              <div
+                className={`card h-100 bg-dark text-white ${
                   movie.id === item.id
-                    ? "3px solid #e50914"
-                    : "2px solid #333",
-              }}
-            >
-              <img src={item.image} alt={item.name} style={styles.poster} />
-              <h3>{item.name}</h3>
-              <p style={styles.genre}>{item.genre}</p>
-              <button style={styles.selectButton}>
-                {movie.id === item.id ? "Selected" : "Select Movie"}
-              </button>
+                    ? "border border-danger border-3"
+                    : "border-secondary"
+                }`}
+                onClick={() => {
+                  setMovie(item);
+                  setSeats([]);
+                  setMessage("");
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    setMovie(item);
+                    setSeats([]);
+                    setMessage("");
+                  }
+                }}
+              >
+                <img
+                  src={item.image}
+                  className="card-img-top"
+                  alt={item.name}
+                  style={{ height: "250px", objectFit: "cover" }}
+                />
+
+                <div className="card-body text-center">
+                  <h5 className="card-title fw-bold">{item.name}</h5>
+                  <p className="text-secondary">{item.genre}</p>
+
+                  <button
+                    type="button"
+                    className={`btn ${
+                      movie.id === item.id
+                        ? "btn-danger"
+                        : "btn-outline-danger"
+                    } w-100`}
+                  >
+                    {movie.id === item.id ? "Selected" : "Select Movie"}
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
-        <section style={styles.bookingSection}>
-          <h2>Book Your Tickets</h2>
-          <p>
+        {/* Booking Section */}
+        <section className="bg-dark rounded-4 p-3 p-md-4 mt-5 shadow">
+          <h2 className="text-danger fw-bold mb-4">
+            Book Your Tickets
+          </h2>
+
+          <p className="fs-5">
             Selected Movie: <strong>{movie.name}</strong>
           </p>
 
-          <h3>Select Show Time</h3>
-          <div style={styles.timeGrid}>
+          {/* Show Time */}
+          <h4 className="mt-4 mb-3">Select Show Time</h4>
+
+          <div className="d-flex flex-wrap gap-2">
             {showTimes.map((time) => (
               <button
                 key={time}
+                type="button"
                 onClick={() => setShowTime(time)}
-                style={{
-                  ...styles.timeButton,
-                  background: showTime === time ? "#e50914" : "#292929",
-                }}
+                className={`btn ${
+                  showTime === time
+                    ? "btn-danger"
+                    : "btn-outline-light"
+                }`}
               >
                 {time}
               </button>
             ))}
           </div>
 
-          <h3>Select Your Seats</h3>
-          <div style={styles.screen}>SCREEN THIS WAY</div>
+          {/* Seats */}
+          <h4 className="mt-5 mb-3">Select Your Seats</h4>
 
-          <div style={styles.seatGrid}>
+          <div className="bg-light text-dark text-center py-2 rounded-pill mx-auto mb-4"
+            style={{ maxWidth: "350px" }}
+          >
+            SCREEN THIS WAY
+          </div>
+
+          <div
+            className="d-grid gap-2 mx-auto"
+            style={{
+              gridTemplateColumns: "repeat(8, minmax(0, 1fr))",
+              maxWidth: "450px",
+            }}
+          >
             {allSeats.map((seat) => (
               <button
                 key={seat}
+                type="button"
                 onClick={() => toggleSeat(seat)}
-                style={{
-                  ...styles.seat,
-                  background: seats.includes(seat) ? "#e50914" : "#333",
-                }}
+                className={`btn btn-sm ${
+                  seats.includes(seat)
+                    ? "btn-danger"
+                    : "btn-outline-secondary"
+                }`}
               >
                 {seat}
               </button>
             ))}
           </div>
 
-          <p style={styles.price}>Ticket Price: ₹{price} per seat</p>
-          <p>Selected Seats: {seats.length ? seats.join(", ") : "None"}</p>
-          <h3>Total Amount: ₹{total}</h3>
+          <div className="mt-4">
+            <p className="text-secondary mb-1">
+              Ticket Price: ₹{price} per seat
+            </p>
 
-          <form onSubmit={bookTickets} style={styles.form}>
+            <p>
+              Selected Seats:{" "}
+              <strong>
+                {seats.length ? seats.join(", ") : "None"}
+              </strong>
+            </p>
+
+            <h3 className="text-danger fw-bold">
+              Total Amount: ₹{total}
+            </h3>
+          </div>
+
+          {/* Customer Form */}
+          <h4 className="mt-4 mb-3">Your Details</h4>
+
+          <form
+            onSubmit={bookTickets}
+            className="d-grid gap-3"
+            style={{ maxWidth: "500px" }}
+          >
             <input
               type="text"
+              className="form-control bg-dark text-white border-secondary"
               placeholder="Enter your full name"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
-              style={styles.input}
               required
             />
 
             <input
               type="email"
+              className="form-control bg-dark text-white border-secondary"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={styles.input}
               required
             />
 
-            <button type="submit" disabled={loading} style={styles.bookButton}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-danger w-100 fw-bold py-3"
+            >
               {loading ? "Booking..." : "Confirm Booking"}
             </button>
           </form>
 
-          {message && <p style={styles.message}>{message}</p>}
+          {/* Message */}
+          {message && (
+            <div
+              className={`alert alert-${messageType} mt-4`}
+              role="alert"
+              style={{ maxWidth: "500px" }}
+            >
+              {message}
+            </div>
+          )}
         </section>
       </main>
 
-      <footer style={styles.footer}>
+      {/* Footer */}
+      <footer className="bg-dark text-center text-secondary py-4 mt-4">
         © 2026 IMovies | Movie Ticket Booking
       </footer>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#111",
-    color: "white",
-    fontFamily: "Arial, sans-serif",
-  },
-  header: {
-    background: "#1b1b1b",
-    padding: "20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  logo: { color: "#e50914", margin: 0 },
-  tagline: { color: "#ccc" },
-  container: { maxWidth: "1100px", margin: "auto", padding: "25px" },
-  heading: { color: "#e50914" },
-  movieGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: "20px",
-  },
-  movieCard: {
-    background: "#1b1b1b",
-    padding: "12px",
-    borderRadius: "10px",
-    textAlign: "center",
-    cursor: "pointer",
-  },
-  poster: { width: "100%", height: "230px", objectFit: "cover", borderRadius: "7px" },
-  genre: { color: "#aaa" },
-  selectButton: {
-    background: "#e50914",
-    color: "white",
-    border: "none",
-    padding: "9px 15px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  bookingSection: {
-    marginTop: "35px",
-    padding: "25px",
-    background: "#1b1b1b",
-    borderRadius: "12px",
-  },
-  timeGrid: { display: "flex", gap: "10px", flexWrap: "wrap" },
-  timeButton: {
-    color: "white",
-    border: "none",
-    padding: "12px 18px",
-    borderRadius: "6px",
-    cursor: "pointer",
-  },
-  screen: {
-    background: "#ddd",
-    color: "#111",
-    textAlign: "center",
-    padding: "10px",
-    margin: "25px auto",
-    maxWidth: "350px",
-    borderRadius: "50% 50% 5px 5px",
-  },
-  seatGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(8, minmax(25px, 1fr))",
-    gap: "9px",
-    maxWidth: "450px",
-    margin: "auto",
-  },
-  seat: {
-    color: "white",
-    border: "none",
-    padding: "10px 2px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  price: { color: "#ccc", marginTop: "25px" },
-  form: {
-    display: "grid",
-    gap: "12px",
-    maxWidth: "450px",
-    marginTop: "20px",
-  },
-  input: {
-    padding: "13px",
-    borderRadius: "5px",
-    border: "1px solid #555",
-    background: "#292929",
-    color: "white",
-  },
-  bookButton: {
-    padding: "14px",
-    background: "#e50914",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    fontWeight: "bold",
-    cursor: "pointer",
-  },
-  message: { color: "#4ade80", marginTop: "15px" },
-  footer: {
-    textAlign: "center",
-    padding: "20px",
-    color: "#aaa",
-    background: "#1b1b1b",
-    marginTop: "30px",
-  },
-};
 
 export default App;

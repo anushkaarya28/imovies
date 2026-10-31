@@ -5,6 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const Booking = require("./models/Booking");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Authentication routes
+app.use("/api/auth", authRoutes);
 
 // Home route
 app.get("/", (req, res) => {
@@ -97,6 +101,10 @@ async function startServer() {
   try {
     if (!process.env.MONGODB_URI) {
       throw new Error("MONGODB_URI is missing in .env");
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing in .env");
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
