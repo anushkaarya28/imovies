@@ -49,7 +49,7 @@ async function readResponse(response) {
 function App() {
   const [user, setUser] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem("imoviesUser")) || null;
+      return JSON.parse(localStorage.getItem("user")) || null;
     } catch {
       return null;
     }
@@ -72,16 +72,19 @@ function App() {
     setUser(loggedInUser);
     setCustomerName(loggedInUser.name || "");
     setEmail(loggedInUser.email || "");
+    setMessage("");
   }
 
   function handleLogout() {
-    localStorage.removeItem("imoviesToken");
-    localStorage.removeItem("imoviesUser");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     setUser(null);
     setSelectedSeats([]);
     setBookings([]);
     setActivePage("home");
     setMessage("");
+    setBookingsError("");
   }
 
   function toggleSeat(seat) {
@@ -90,6 +93,7 @@ function App() {
         ? previous.filter((item) => item !== seat)
         : [...previous, seat]
     );
+
     setMessage("");
   }
 
@@ -99,13 +103,14 @@ function App() {
     setBookingsError("");
 
     try {
-      const token = localStorage.getItem("imoviesToken");
+      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("Please login again.");
       }
 
       const response = await fetch(`${API_URL}/api/bookings`, {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -113,6 +118,11 @@ function App() {
       });
 
       const data = await readResponse(response);
+
+      if (response.status === 401) {
+        handleLogout();
+        throw new Error("Your session has expired. Please login again.");
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Unable to load bookings.");
@@ -143,7 +153,7 @@ function App() {
     setMessage("");
 
     try {
-      const token = localStorage.getItem("imoviesToken");
+      const token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("Please login again.");
@@ -166,6 +176,11 @@ function App() {
       });
 
       const data = await readResponse(response);
+
+      if (response.status === 401) {
+        handleLogout();
+        throw new Error("Your session has expired. Please login again.");
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Booking failed.");
@@ -482,9 +497,7 @@ function App() {
                           Booking Confirmed
                         </span>
 
-                        <h4 className="fw-bold">
-                          {booking.movieName}
-                        </h4>
+                        <h4 className="fw-bold">{booking.movieName}</h4>
 
                         <hr className="border-secondary" />
 
@@ -502,12 +515,14 @@ function App() {
 
                         <p className="mb-2">
                           <strong>Seats:</strong>{" "}
-                          {booking.seats.join(", ")}
+                          {(booking.seats || []).join(", ")}
                         </p>
 
                         <p className="mb-2">
                           <strong>Booking Date:</strong>{" "}
-                          {new Date(booking.createdAt).toLocaleDateString()}
+                          {booking.createdAt
+                            ? new Date(booking.createdAt).toLocaleDateString()
+                            : "Not available"}
                         </p>
 
                         <div className="d-flex justify-content-between align-items-center mt-4">
