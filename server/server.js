@@ -5,7 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const Booking = require("./models/Booking");
-const User = require("./models/User");
+const User = require("./models/user");
 const authRoutes = require("./routes/authRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 
