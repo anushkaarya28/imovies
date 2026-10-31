@@ -11,11 +11,14 @@ const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
+// Middleware
 app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://imovies-theta-indol.vercel.app"
-  ]
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
@@ -36,17 +39,17 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Create booking - Login required
+// Create booking - login required
 app.post("/api/bookings", authMiddleware, async (req, res) => {
   try {
-    const {
-      movieName,
-      showTime,
-      seats,
-      totalAmount
-    } = req.body;
+    const { movieName, showTime, seats, totalAmount } = req.body;
 
-    if (!movieName || !showTime || !Array.isArray(seats) || seats.length === 0) {
+    if (
+      !movieName ||
+      !showTime ||
+      !Array.isArray(seats) ||
+      seats.length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "Movie, show time and seats are required."
@@ -84,7 +87,7 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
 
     const savedBooking = await booking.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Ticket booked successfully!",
       booking: savedBooking
@@ -93,14 +96,14 @@ app.post("/api/bookings", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Booking error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Unable to create booking."
     });
   }
 });
 
-// Get only the logged-in user's bookings
+// Get logged-in user's bookings
 app.get("/api/bookings", authMiddleware, async (req, res) => {
   try {
     const bookings = await Booking.find({
@@ -109,7 +112,7 @@ app.get("/api/bookings", authMiddleware, async (req, res) => {
       createdAt: -1
     });
 
-    res.json({
+    return res.json({
       success: true,
       bookings
     });
@@ -117,36 +120,36 @@ app.get("/api/bookings", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Fetch bookings error:", error.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Unable to fetch bookings."
     });
   }
 });
 
-// Server start
+// Start server
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
     if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing in .env");
+      throw new Error("MONGODB_URI is missing in environment variables.");
     }
 
     if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is missing in .env");
+      throw new Error("JWT_SECRET is missing in environment variables.");
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
 
     console.log("MongoDB connected successfully!");
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`IMovies server running on port ${PORT}`);
     });
 
   } catch (error) {
-    console.error("Server startup failed:", error);
+    console.error("Server startup failed:", error.message);
     process.exit(1);
   }
 }
