@@ -5,11 +5,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const Booking = require("./models/Booking");
+const User = require("./models/User");
 const authRoutes = require("./routes/authRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -35,22 +36,47 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Create booking
-app.post("/api/bookings", async (req, res) => {
+// Create booking - Login required
+app.post("/api/bookings", authMiddleware, async (req, res) => {
   try {
     const {
       movieName,
-      customerName,
-      email,
       showTime,
       seats,
       totalAmount
     } = req.body;
 
+    if (!movieName || !showTime || !Array.isArray(seats) || seats.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Movie, show time and seats are required."
+      });
+    }
+
+    if (
+      !Number.isFinite(totalAmount) ||
+      totalAmount !== seats.length * 200
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid booking amount."
+      });
+    }
+
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found. Please login again."
+      });
+    }
+
     const booking = new Booking({
+      userId: user._id,
       movieName,
-      customerName,
-      email,
+      customerName: user.name,
+      email: user.email,
       showTime,
       seats,
       totalAmount
@@ -69,15 +95,17 @@ app.post("/api/bookings", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Unable to create booking."
     });
   }
 });
 
-// Get all bookings
-app.get("/api/bookings", async (req, res) => {
+// Get only the logged-in user's bookings
+app.get("/api/bookings", authMiddleware, async (req, res) => {
   try {
-    const bookings = await Booking.find().sort({
+    const bookings = await Booking.find({
+      userId: req.userId
+    }).sort({
       createdAt: -1
     });
 
@@ -87,9 +115,11 @@ app.get("/api/bookings", async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Fetch bookings error:", error.message);
+
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Unable to fetch bookings."
     });
   }
 });

@@ -3,6 +3,12 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
     movieName: {
       type: String,
       required: true
@@ -15,7 +21,9 @@ const bookingSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      required: true
+      required: true,
+      lowercase: true,
+      trim: true
     },
 
     showTime: {
