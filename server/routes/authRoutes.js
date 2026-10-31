@@ -6,6 +6,15 @@ const User = require("../models/user");
 
 const router = express.Router();
 
+// Generate JWT token
+function generateToken(user) {
+  return jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+}
+
 // User Registration
 router.post("/register", async (req, res) => {
   try {
@@ -23,7 +32,11 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
 
     if (existingUser) {
       return res.status(409).json({
@@ -34,13 +47,16 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
-      email,
+      name: name.trim(),
+      email: normalizedEmail,
       password: hashedPassword,
     });
 
-    res.status(201).json({
+    const token = generateToken(user);
+
+    return res.status(201).json({
       message: "Registration successful",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -48,7 +64,9 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Registration error:", error.message);
+
+    return res.status(500).json({
       message: "Registration failed",
     });
   }
@@ -65,7 +83,11 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
@@ -73,13 +95,9 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = generateToken(user);
 
-    res.json({
+    return res.status(200).json({
       message: "Login successful",
       token,
       user: {
@@ -89,7 +107,9 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Login error:", error.message);
+
+    return res.status(500).json({
       message: "Login failed",
     });
   }
