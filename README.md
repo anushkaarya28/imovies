@@ -64,19 +64,19 @@ The project is built using React.js, Node.js, Express.js, MongoDB Atlas, and JWT
 
 ### 1. Home Page
 
-<!-- Add more screenshots here after uploading them to the GitHub repository. -->
+![IMovies Home Page](imovies-home.png)
 
 ### 2. Login and Registration Page
 
-<!-- Add your login/register screenshot here. -->
+![IMovies Login and Registration Page](imovies-login.png)
 
 ### 3. Movie and Seat Selection
 
-<!-- Add your movie/seat selection screenshot here. -->
+![IMovies Movie and Seat Selection Page](imovies-seatselection.png)
 
 ### 4. My Bookings Page
 
-<!-- Add your My Bookings screenshot here. -->
+![IMovies My Booking Page](imovies-bookingspage.png)
 
 ## ⚙️ Project Working
 
