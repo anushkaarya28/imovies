@@ -3,7 +3,7 @@ import { useState } from "react";
 import Auth from "./components/Auth";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://imovies-backend-lu6f.onrender.com";
 
 const movies = [
   {
