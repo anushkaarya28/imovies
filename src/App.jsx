@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import Auth from "./components/Auth";
+import Auth from "./components/auth.jsx";
 import "./App.css";
 
 const API_URL = "https://imovies-backend-lu6f.onrender.com";
