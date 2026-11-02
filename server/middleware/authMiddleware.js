@@ -1,3 +1,4 @@
+
 const jwt = require("jsonwebtoken");
 
 function authMiddleware(req, res, next) {
@@ -5,16 +6,14 @@ function authMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        message: "Please login first. Authentication token is missing.",
-      });
+      return res.status(401).json({ message: "Please login first." });
     }
 
     const token = authHeader.split(" ")[1];
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.userId = decoded.userId;
+    req.userRole = decoded.role || "user";
 
     next();
   } catch (error) {
@@ -24,4 +23,15 @@ function authMiddleware(req, res, next) {
   }
 }
 
+function adminMiddleware(req, res, next) {
+  if (req.userRole !== "admin") {
+    return res.status(403).json({
+      message: "Admin access required.",
+    });
+  }
+
+  next();
+}
+
 module.exports = authMiddleware;
+module.exports.adminMiddleware = adminMiddleware;

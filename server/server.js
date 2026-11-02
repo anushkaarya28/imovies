@@ -1,155 +1,159 @@
 
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
 
 const Booking = require("./models/Booking");
 const User = require("./models/user");
+
 const authRoutes = require("./routes/authRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
+
+const movieRoutes = require("./routes/movieRoutes");
+const theaterRoutes = require("./routes/theaterRoutes");
+const showRoutes = require("./routes/showRoutes");
 
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://imovies-theta-indol.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://imovies-theta-indol.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
 
-// Authentication routes
+// API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/theaters", theaterRoutes);
+app.use("/api/shows", showRoutes);
 
 // Home route
 app.get("/", (req, res) => {
-  res.send("Welcome to IMovies API");
+  res.json({
+    message: "Welcome to IMovies API",
+    status: "Server is running",
+  });
 });
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
-    success: true,
-    message: "IMovies backend is running!"
+    status: "OK",
+    message: "IMovies backend is healthy",
   });
 });
 
-// Create booking - login required
+// Create Booking
 app.post("/api/bookings", authMiddleware, async (req, res) => {
   try {
-    const { movieName, showTime, seats, totalAmount } = req.body;
+    const {
+      movieName,
+      customerName,
+      email,
+      showTime,
+      seats,
+      totalAmount,
+    } = req.body;
 
     if (
       !movieName ||
+      !customerName ||
+      !email ||
       !showTime ||
       !Array.isArray(seats) ||
       seats.length === 0
     ) {
       return res.status(400).json({
-        success: false,
-        message: "Movie, show time and seats are required."
+        message: "Please provide all booking details.",
       });
     }
 
-    if (
-      !Number.isFinite(totalAmount) ||
-      totalAmount !== seats.length * 200
-    ) {
+    const expectedAmount = seats.length * 200;
+
+    if (Number(totalAmount) !== expectedAmount) {
       return res.status(400).json({
-        success: false,
-        message: "Invalid booking amount."
+        message: "Invalid total amount.",
       });
     }
 
     const user = await User.findById(req.userId);
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found. Please login again."
+      return res.status(404).json({
+        message: "User not found.",
       });
     }
 
     const booking = new Booking({
-      userId: user._id,
+      userId: req.userId,
       movieName,
-      customerName: user.name,
-      email: user.email,
+      customerName,
+      email,
       showTime,
       seats,
-      totalAmount
+      totalAmount: expectedAmount,
     });
 
-    const savedBooking = await booking.save();
+    await booking.save();
 
-    return res.status(201).json({
-      success: true,
-      message: "Ticket booked successfully!",
-      booking: savedBooking
+    res.status(201).json({
+      message: "Booking successful!",
+      booking,
     });
-
   } catch (error) {
-    console.error("Booking error:", error.message);
+    console.error("Booking error:", error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Unable to create booking."
+    res.status(500).json({
+      message: "Failed to create booking.",
     });
   }
 });
 
-// Get logged-in user's bookings
+// Get Logged-in User Bookings
 app.get("/api/bookings", authMiddleware, async (req, res) => {
   try {
     const bookings = await Booking.find({
-      userId: req.userId
-    }).sort({
-      createdAt: -1
-    });
+      userId: req.userId,
+    }).sort({ createdAt: -1 });
 
-    return res.json({
-      success: true,
-      bookings
-    });
-
+    res.status(200).json(bookings);
   } catch (error) {
-    console.error("Fetch bookings error:", error.message);
+    console.error("Fetch bookings error:", error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Unable to fetch bookings."
+    res.status(500).json({
+      message: "Failed to fetch bookings.",
     });
   }
 });
 
-// Start server
+// Server startup
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
     if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing in environment variables.");
-    }
-
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is missing in environment variables.");
+      throw new Error("MONGODB_URI is missing in .env file");
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
 
     console.log("MongoDB connected successfully!");
 
-    app.listen(PORT, "0.0.0.0", () => {
+    app.listen(PORT, () => {
       console.log(`IMovies server running on port ${PORT}`);
     });
-
   } catch (error) {
-    console.error("Server startup failed:", error.message);
+    console.error("Server startup error:", error.message);
     process.exit(1);
   }
 }

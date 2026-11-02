@@ -6,42 +6,31 @@ const User = require("../models/user");
 
 const router = express.Router();
 
-// Generate JWT token
 function generateToken(user) {
   return jwt.sign(
-    { userId: user._id },
+    { userId: user._id, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: "1d" }
   );
 }
 
-// User Registration
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({
-        message: "Password must be at least 6 characters",
-      });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
-    const existingUser = await User.findOne({
-      email: normalizedEmail,
-    });
+    const existingUser = await User.findOne({ email: normalizedEmail });
 
     if (existingUser) {
-      return res.status(409).json({
-        message: "Email already registered",
-      });
+      return res.status(409).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -50,68 +39,54 @@ router.post("/register", async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
+      role: "user",
     });
-
-    const token = generateToken(user);
 
     return res.status(201).json({
       message: "Registration successful",
-      token,
+      token: generateToken(user),
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
     console.error("Registration error:", error.message);
-
-    return res.status(500).json({
-      message: "Registration failed",
-    });
+    return res.status(500).json({ message: "Registration failed" });
   }
 });
 
-// User Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-
     const user = await User.findOne({
-      email: normalizedEmail,
+      email: email.trim().toLowerCase(),
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    const token = generateToken(user);
 
     return res.status(200).json({
       message: "Login successful",
-      token,
+      token: generateToken(user),
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role || "user",
       },
     });
   } catch (error) {
     console.error("Login error:", error.message);
-
-    return res.status(500).json({
-      message: "Login failed",
-    });
+    return res.status(500).json({ message: "Login failed" });
   }
 });
 
