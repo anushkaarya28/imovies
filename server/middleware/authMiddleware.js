@@ -25,6 +25,7 @@ async function authMiddleware(req, res, next) {
 
     req.userId = user._id;
     req.userRole = user.role;
+    console.log("Admin check:", user.email, user.role);
 
     next();
   } catch (error) {
