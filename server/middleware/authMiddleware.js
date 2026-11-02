@@ -15,7 +15,7 @@ async function authMiddleware(req, res, next) {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.userId).select("role");
+    const user = await User.findById(decoded.userId).select("name email role");
     console.log("Token user ID:", decoded.userId);
     console.log("Database role:", user?.role); 
 
@@ -27,6 +27,7 @@ async function authMiddleware(req, res, next) {
 
     req.userId = user._id;
     req.userRole = user.role;
+    console.log("Authenticated user:", user.name, user.email, user.role);
     console.log("Admin check:", user.email, user.role);
 
     next();
