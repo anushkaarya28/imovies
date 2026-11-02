@@ -16,6 +16,8 @@ async function authMiddleware(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.userId).select("role");
+    console.log("Token user ID:", decoded.userId);
+    console.log("Database role:", user?.role); 
 
     if (!user) {
       return res.status(401).json({
