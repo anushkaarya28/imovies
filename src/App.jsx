@@ -355,14 +355,12 @@ function App() {
             Watchlist
           </button>
 
-          {user.role === "admin" && (
-            <button
-              className="btn btn-outline-warning"
-              onClick={loadAdminDashboard}
-            >
-              Admin
-            </button>
-          )}
+          <button
+            className="btn btn-outline-warning"
+            onClick={loadAdminDashboard}
+          >
+           Admin Dashboard
+          </button>
 
           <span className="d-none d-md-inline">
             Hi, {user.name}!
