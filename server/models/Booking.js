@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
@@ -6,44 +5,48 @@ const bookingSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
+    },
+
+    showId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Show",
+      required: true,
     },
 
     movieName: {
       type: String,
-      required: true
+      required: true,
     },
 
     customerName: {
       type: String,
-      required: true
+      required: true,
     },
 
     email: {
       type: String,
       required: true,
       lowercase: true,
-      trim: true
+      trim: true,
     },
 
     showTime: {
       type: String,
-      required: true
+      required: true,
     },
 
     seats: {
       type: [String],
-      required: true
+      required: true,
     },
 
     totalAmount: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Booking", bookingSchema);
