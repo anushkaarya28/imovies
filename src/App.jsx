@@ -766,36 +766,44 @@ function App() {
         </main>
       )}
 
-      {activePage === "admin" && (
-        <main className="container py-5">
-          <h1 className="fw-bold mb-4">Admin Dashboard</h1>
+      
+{activePage === "admin" && (
+  <main className="container py-5">
+    <h1 className="fw-bold mb-4">Admin Dashboard</h1>
 
-          {pageLoading ? (
-            <p>Loading dashboard...</p>
-          ) : adminStats ? (
-            <div className="row g-3">
-              {Object.entries(adminStats).map(([key, value]) => (
-                <div className="col-6 col-md-4" key={key}>
-                  <div className="card bg-black border-secondary text-white p-4">
-                    <h5 className="text-secondary text-capitalize">
-                      {key.replace(/([A-Z])/g, " $1")}
-                    </h5>
-                    <h2 className="text-danger">{value}</h2>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No dashboard data available.</p>
-          )}
-        </main>
-      )}
+    {pageLoading ? (
+      <p>Loading dashboard...</p>
+    ) : adminStats?.stats ? (
+      <div className="row g-3">
+        <div className="col-6 col-md-4">
+          <div className="card bg-black border-secondary text-white p-4">
+            <h5 className="text-secondary">Total Users</h5>
+            <h2 className="text-danger">
+              {adminStats.stats.totalUsers}
+            </h2>
+          </div>
+        </div>
 
-      <footer className="bg-black text-center text-secondary py-4">
-        © 2026 IMovies. All rights reserved.
-      </footer>
-    </div>
-  );
+        <div className="col-6 col-md-4">
+          <div className="card bg-black border-secondary text-white p-4">
+            <h5 className="text-secondary">Total Bookings</h5>
+            <h2 className="text-danger">
+              {adminStats.stats.totalBookings}
+            </h2>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <p>No dashboard data available.</p>
+    )}
+  </main>
+)}
+
+<footer className="bg-black text-center text-secondary py-4">
+  © 2026 IMovies. All rights reserved.
+</footer>
+</div>
+);
 }
 
 export default App;
